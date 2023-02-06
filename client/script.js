@@ -1,13 +1,13 @@
 import bot from './assets/bot.svg';
 import user from './assets/user.svg';
 
-const form = document.querySelector('form');
-const chatContainer = document.querySelector('#chat_container');
+const form = document.querySelector('form')
+const chatContainer = document.querySelector('#chat_container')
 
-let loadInterval;
+let loadInterval
 
 function loader(element) {
-    element.textContent = '';
+    element.textContent = ''
 
     loadInterval = setInterval(() => {
         // Update the text content of the loading indicator
@@ -27,7 +27,7 @@ function typeText(element, text) {
     let interval = setInterval(() => {
         if (index < text.length) {
             element.innerHTML += text.charAt(index);
-            index++;
+            index++
         } else {
             clearInterval(interval);
         }
@@ -52,7 +52,7 @@ function chatStripe(isAi, value, uniqueId) {
             <div class="chat">
                 <div className="profile">
                 <img
-                    src="${isAi ?  bot :user}"
+                    src=${isAi ?  bot :user}
                     alt="${isAi ? 'bot' : 'user'}"
                     />
                 </div>
@@ -65,7 +65,7 @@ function chatStripe(isAi, value, uniqueId) {
 }
 
 const handleSubmit = async(e) => {
-    e.preventDefault();
+    e.preventDefault()
 
     const data = new FormData(form)
 
@@ -73,27 +73,27 @@ const handleSubmit = async(e) => {
     chatContainer.innerHTML += chatStripe(false, data.get('prompt'));
 
     // to clear the textarea input
-    form.reset();
+    form.reset()
 
     // bot's chatStripe
     const uniqueId = generateUniqueId()
-    chatContainer.innerHTML += chatStripe(true, " ", uniqueId);
+    chatContainer.innerHTML += chatStripe(true, " ", uniqueId)
 
     // to focus scroll to the bottom
     chatContainer.scrollTop = chatContainer.scrollHeight;
 
     // specific message div
-    const messageDiv = document.getElementById(uniqueId);
+    const messageDiv = document.getElementById(uniqueId)
 
     // messageDiv.innerHTML = "..."
-    loader(messageDiv);
+    loader(messageDiv)
 
     // fetch data from server -> bot's response
 
-    const response = await fetch("https://codex-dilh.onrender.com", {
+    const response = await fetch("https://codex-dilh.onrender.com/", {
         method: "POST",
         headers: {
-            'Content-Type': "application/json"
+            'Content-Type': "application/json",
         },
         body: JSON.stringify({
             prompt: data.get('prompt')
@@ -107,21 +107,19 @@ const handleSubmit = async(e) => {
         const data = await response.json();
         const parsedData = data.bot.trim() // trims any trailing spaces/'\n'
 
-        console.log({ parsedData });
-
-        typeText(messageDiv, parsedData);
+        typeText(messageDiv, parsedData)
     } else {
-        const err = await response.text();
+        const err = await response.text()
 
-        messageDiv.innerHTML = "Something went wrong";
+        messageDiv.innerHTML = "Something went wrong"
 
         alert(err);
     }
 }
 
-form.addEventListener('submit', handleSubmit);
+form.addEventListener('submit', handleSubmit)
 form.addEventListener('keyup', (e) => {
     if (e.keyCode === 13) {
-        handleSubmit(e);
+        handleSubmit(e)
     }
 })
